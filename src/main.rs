@@ -1,6 +1,5 @@
-#![feature(try_trait)]
 use prettytable::{cell, ptable, row, table};
-use std::{option::NoneError, process::Command};
+use std::process::Command;
 
 
 #[cfg(target_os="linux")]
@@ -56,6 +55,7 @@ fn hostname() -> Option<String> {
             .stdout;
         std::str::from_utf8(&stdout)
             .ok()
+            .filter(|s| !s.is_empty())
             .map(|s| s.trim().to_owned())
     })
 }
@@ -72,14 +72,16 @@ fn get_distro() -> Option<String> {
         .flatten()
 }
 
-fn main() -> Result<(), NoneError> {
-    ptable!(
-        [bucFg=> "Device", "Data"],
-        [iucFR => "Distribution", get_distro()?],
-        [iucFR => "CPU", get_cpu()?],
-        [iucFR => "GPU", get_gpu()?],
-        [iucFR => "Hostname", hostname()?],
-        [iucFR => "Terminal", get_parent_name(unsafe { getppid() })?]
-    );
-    Ok(())
+fn main() {
+    (|| -> Option<()> {
+        ptable!(
+            [bucFg=> "Device", "Data"],
+            [icFR => "Distribution", get_distro()?],
+            [icFR => "CPU", get_cpu()?],
+            [icFR => "GPU", get_gpu()?],
+            [icFR => "Hostname", hostname()?],
+            [icFR => "Terminal", get_parent_name(unsafe { getppid() })?]
+        );
+        Some(())
+    })().unwrap();
 }

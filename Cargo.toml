@@ -1,5 +1,5 @@
 [package]
-name = "simplefetch"
+name = "minifetch"
 version = "0.1.0"
 authors = ["echnobas <echnobas.git@gmail.com>"]
 edition = "2018"
@@ -9,7 +9,10 @@ edition = "2018"
 [profile.release]
 codegen-units = 1
 lto = true
-opt-level = 'z'
+panic = "abort"
+
+[profile.release.package."*"]
+codegen-units = 1
 
 [dependencies]
 prettytable-rs = { version = "0.8.0", default-features = false}
